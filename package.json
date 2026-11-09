@@ -5,6 +5,9 @@
   "version": "0.1.0",
   "publisher": "dasax",
   "license": "MIT",
+  "repository": { "type": "git", "url": "https://github.com/dasax/vscode-shng-items.git" },
+  "bugs": { "url": "https://github.com/dasax/vscode-shng-items/issues" },
+  "homepage": "https://github.com/dasax/vscode-shng-items#readme",
   "icon": "media/icon.png",
   "engines": {
     "vscode": "^1.80.0"

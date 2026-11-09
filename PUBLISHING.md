@@ -17,15 +17,15 @@ Danach ein neues Terminal öffnen und mit `node -v` und `npx -v` prüfen.
 Der Marketplace verlinkt das Repository auf der Seite der Extension und löst relative Links in der README darüber auf.
 
 1. Auf GitHub ein leeres Repository anlegen, z.B. `vscode-shng-items`.
-2. In `package.json` ergänzen (`<user>` ersetzen):
+2. In `package.json` eintragen (erledigt):
    ```json
-   "repository": { "type": "git", "url": "https://github.com/<user>/vscode-shng-items.git" },
-   "bugs": { "url": "https://github.com/<user>/vscode-shng-items/issues" },
-   "homepage": "https://github.com/<user>/vscode-shng-items#readme",
+   "repository": { "type": "git", "url": "https://github.com/dasax/vscode-shng-items.git" },
+   "bugs": { "url": "https://github.com/dasax/vscode-shng-items/issues" },
+   "homepage": "https://github.com/dasax/vscode-shng-items#readme",
    ```
 3. Hochladen:
    ```powershell
-   git remote add origin https://github.com/<user>/vscode-shng-items.git
+   git remote add origin https://github.com/dasax/vscode-shng-items.git
    git push -u origin master
    ```
 
