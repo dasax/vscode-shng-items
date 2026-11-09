@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.1
+
+- Package now includes the license file
+- Links to the GitHub repository, issues and homepage
+
 ## 0.1.0
 
 First public version.

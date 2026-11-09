@@ -2,7 +2,7 @@
   "name": "shng-items",
   "displayName": "SmartHomeNG Items",
   "description": "SmartHomeNG items in VS Code: item tree with resolved structs, search & filter, autocomplete for items/structs/logics, KNX group addresses from the ETS project (UI in German)",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "publisher": "dasax",
   "license": "MIT",
   "repository": { "type": "git", "url": "https://github.com/dasax/vscode-shng-items.git" },
