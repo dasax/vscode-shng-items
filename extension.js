@@ -281,6 +281,12 @@ async function activate(context) {
     cmd('shngItems.toggleAttributes', () => toggleSetting('showAttributes'));
     cmd('shngItems.toggleStructItems', () => toggleSetting('showStructItems'));
     cmd('shngItems.toggleSort', () => toggleSetting('sortAlphabetically'));
+    // Symbole in der Titelleiste des Item-Baums (je Zustand ein Befehl, damit der Tooltip die Aktion nennt)
+    for (const [id, key] of [['hideAttributes', 'showAttributes'], ['showAttributes', 'showAttributes'],
+        ['hideStructItems', 'showStructItems'], ['showStructItems', 'showStructItems'],
+        ['sortFileOrder', 'sortAlphabetically'], ['sortAlpha', 'sortAlphabetically']]) {
+        cmd('shngItems.' + id, () => toggleSetting(key));
+    }
 
     registerLanguageFeatures(context, () => model);
     registerCompletion(context, () => model);

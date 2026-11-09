@@ -1,4 +1,5 @@
-# Baut shng-items-<version>.vsix ohne Node/vsce und installiert es optional.
+# Baut shng-items-<version>.vsix ohne Node/vsce und installiert es optional (für die lokale Entwicklung).
+# Zum Veröffentlichen im Marketplace bzw. bei Open VSX stattdessen vsce/ovsx verwenden (siehe PUBLISHING.md).
 #   .\build.ps1            -> nur bauen
 #   .\build.ps1 -Install   -> bauen und in VS Code installieren
 param([switch]$Install)
@@ -9,7 +10,7 @@ Add-Type -AssemblyName System.IO.Compression, System.IO.Compression.FileSystem
 $root = $PSScriptRoot
 $pkg = Get-Content (Join-Path $root 'package.json') -Raw -Encoding UTF8 | ConvertFrom-Json
 $vsix = Join-Path $root "$($pkg.name)-$($pkg.version).vsix"
-$files = @('package.json', 'extension.js', 'README.md') +
+$files = @('package.json', 'extension.js', 'README.md', 'README.de.md', 'CHANGELOG.md') +
     (Get-ChildItem (Join-Path $root 'lib') -File | ForEach-Object { "lib/$($_.Name)" }) +
     (Get-ChildItem (Join-Path $root 'media') -File | ForEach-Object { "media/$($_.Name)" })
 
@@ -20,7 +21,8 @@ $manifest = @"
     <Identity Language="en-US" Id="$($pkg.name)" Version="$($pkg.version)" Publisher="$($pkg.publisher)" />
     <DisplayName>$($pkg.displayName)</DisplayName>
     <Description xml:space="preserve">$([System.Security.SecurityElement]::Escape($pkg.description))</Description>
-    <Categories>Visualization,Other</Categories>
+    <Categories>Programming Languages,Visualization,Other</Categories>
+    <Icon>extension/media/icon.png</Icon>
     <Properties>
       <Property Id="Microsoft.VisualStudio.Code.Engine" Value="$($pkg.engines.vscode)" />
     </Properties>
@@ -30,6 +32,8 @@ $manifest = @"
   <Assets>
     <Asset Type="Microsoft.VisualStudio.Code.Manifest" Path="extension/package.json" Addressable="true" />
     <Asset Type="Microsoft.VisualStudio.Services.Content.Details" Path="extension/README.md" Addressable="true" />
+    <Asset Type="Microsoft.VisualStudio.Services.Content.Changelog" Path="extension/CHANGELOG.md" Addressable="true" />
+    <Asset Type="Microsoft.VisualStudio.Services.Icons.Default" Path="extension/media/icon.png" Addressable="true" />
   </Assets>
 </PackageManifest>
 "@
@@ -41,6 +45,7 @@ $contentTypes = @'
   <Default Extension=".js" ContentType="application/javascript" />
   <Default Extension=".md" ContentType="text/markdown" />
   <Default Extension=".svg" ContentType="image/svg+xml" />
+  <Default Extension=".png" ContentType="image/png" />
   <Default Extension=".vsixmanifest" ContentType="text/xml" />
 </Types>
 '@

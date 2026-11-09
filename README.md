@@ -1,49 +1,60 @@
-# SmartHomeNG Items für VS Code
+# SmartHomeNG Items for VS Code
 
-Zeigt die in `items/*.yaml` definierten SmartHomeNG-Items übersichtlich an – so, wie SmartHomeNG sie
-nach dem Laden sieht: alle Dateien zusammengeführt und Structs (`structs/`, `etc/struct*.yaml`,
-`plugins/<plugin>/plugin.yaml`) aufgelöst.
+[Deutsch](README.de.md)
 
-## Funktionen
+Shows the items of a [SmartHomeNG](https://www.smarthomeng.de) installation the way SmartHomeNG sees them after
+loading: all `items/*.yaml` files merged and structs (`structs/`, `etc/struct*.yaml`, `plugins/<plugin>/plugin.yaml`)
+resolved. Adds search, filters, autocomplete and KNX group addresses from your ETS project.
 
-- **Baumansicht** (Activity Bar → SmartHomeNG): alle Items hierarchisch, mit Typ, KNX-Gruppenadressen
-  (`→` send, `←` listen, `⇐` init), Hue-ID, `ƒ` für eval, `⏲` für UZSU und verwendetem Struct.
-  Durch Structs erzeugte Items/Attribute sind lila bzw. grau markiert. Klick springt zur Definition.
-- **Tooltip** mit allen Attributen (inkl. Herkunft aus Struct) und Links zu den Definitionen.
-- **Filter** (oberster Bereich): Kategorie-Chips (KNX, Hue, 1-Wire, …; mehrere = UND) und Typ-Chips (bool, num, …; automatisch aus den Items, mehrere = ODER) filtern Suche und Item-Baum.
-- **Suche** (Strg+Shift+Alt+I): Live-Trefferliste über Pfad, Name und Attribute; Muster-Suche wie `baddim` → `eg.bad.licht.spiegel.dimmen`; ✕ oder Esc leert das Feld. Bei aktivem Filter stehen ausgeblendete Treffer unter einem Strich; nur durch Structs erzeugte Items (lila) stehen immer am Ende.
-- **Autovervollständigung** in `items/*.yaml` und `structs/*.yaml`: Unter-Items (aus gleichnamigen und gleich tiefen Items, Struct-Kinder zum Erweitern), Attribute (SmartHomeNG-Kern und `item_attributes` der konfigurierten Plugins, inkl. `@instanz`) und Werte (`type`, Struct-Namen, Item-Pfade für `eval_trigger` & Co., `valid_list` der Plugins, verwendete Werte). Sortiert nach dem, was in den vorhandenen Items zusammen vorkommt (z.B. `type: bool` → `knx_dpt` → `1`). `sh.` in `eval`/`on_change` schlägt Item-Pfade vor, auch relative (`..geschwister`, `.kind`, `...onkel`, `.self`); ebenso `eval_trigger`, das Ziel von `on_change`/`on_update` und `sh.`/`items.return_item()` in `logics/*.py`.
-- **KNX / ETS** (Einstellung `shngItems.knxProject` = Pfad zur `.knxproj`): `knx_send`, `knx_listen`, … schlagen passende Gruppenadressen vor (Name ↔ Item-Pfad, DPT ↔ `type`/`knx_dpt`, Status-Adressen für `knx_listen`) plus die nächste freie Adresse der Gruppe; `knx_dpt` übernimmt den DPT aus der ETS; Hover über eine Gruppenadresse zeigt ETS-Name, DPT und alle Items, die sie verwenden.
-- **Textfilter im Baum** (Trichter-Symbol): sucht in Pfaden, Attributnamen und Werten, z.B. `1/1/12`, `bad licht`, `uzsu`.
-- **Item öffnen …** (Lupe): Schnellauswahl über alle Item-Pfade.
-- **Item-Übersicht** (Tabellen-Symbol): sortier- und filterbare Tabelle aller Items, Attribute per ▸ aufklappbar.
-- **Hover & Gehe zu Definition (F12)** für Item-Pfade in YAML, Python (Logiken) und HTML (smartVISU),
-  z.B. auf `sh.eg.bad.licht.decke.schalten()` oder `'eg.bad.licht.decke.schalten'`.
-- **Prüfungen**: Warnung bei unbekannten Structs, `eval_trigger` auf nicht existierende Items und
-  unbekannten `sh.*`-Referenzen in `eval`/`on_change`/`on_update`.
-- Kontextmenü: Item-Pfad kopieren, Verwendungen im Workspace suchen; im Editor: „Item im Baum anzeigen“.
+> The user interface is in German, as is most of the SmartHomeNG community.
 
-## Installation
+## Features
 
-```powershell
-cd C:\Users\danie\vscode-shng-items
-.\build.ps1 -Install
-```
+- **Item tree** (activity bar → SmartHomeNG): all items with type, KNX group addresses (`→` send, `←` listen,
+  `⇐` init), Hue ID, `ƒ` for eval, `⏲` for UZSU and the struct used. Items that exist only through a struct are purple,
+  attributes from structs grey. Clicking an item opens its definition in `items/`.
+- **Tooltip** with all attributes (including their struct origin) and links to the definitions.
+- **Filters**: one chip per configured plugin (read from `etc/plugin.yaml` and the plugins' `item_attributes`), extra
+  categories (eval, timers, cache) and item types (bool, num, …). Plugins/categories are combined with AND, types with
+  OR. Applies to the search and the item tree.
+- **Search** (Ctrl+Shift+Alt+I): live results over path, name and attributes; pattern matching such as `baddim` →
+  `eg.bad.licht.spiegel.dimmen`; ranked by fewest fragments and word starts; hits hidden by the filter are listed below
+  a separator; items that exist only through a struct come last.
+- **Autocomplete** in `items/*.yaml`, `structs/*.yaml` and `logics/*.py`:
+  - child items (from items with the same name or at the same depth, struct children to extend)
+  - attributes (SmartHomeNG core and `item_attributes` of the configured plugins, including `@instance`)
+  - values (`type`, struct names, plugin `valid_list`, values used elsewhere)
+  - item paths for `eval_trigger`, `hysteresis_input`, the target of `on_change`/`on_update` and `sh.` in expressions –
+    absolute and relative (`..sibling`, `.child`, `...uncle`, `.self`)
+  - ranked by what occurs together in your existing items (e.g. `type: bool` → `knx_dpt` → `1`)
+- **KNX / ETS** (setting `shngItems.knxProject`): `knx_send`, `knx_listen`, … suggest matching group addresses from the
+  ETS project (name and groups ↔ item path, DPT ↔ `type`/`knx_dpt`, status addresses for `knx_listen`) plus the next
+  free address in the group; `knx_dpt` takes the DPT from the ETS; hovering a group address shows its ETS name, groups,
+  DPT and all items using it.
+- **Item overview** (table icon): sortable and filterable table of all items.
+- **Hover & Go to Definition (F12)** for item paths in YAML, Python (logics) and HTML (smartVISU).
+- **Diagnostics**: unknown structs, `eval_trigger` pointing to missing items, unknown `sh.*` references in
+  `eval`/`on_change`/`on_update`.
+- Context menu: copy item path, find usages; in the editor: "Item im Baum anzeigen" (reveal item in tree).
 
-Danach VS Code neu laden (`Developer: Reload Window`).
+## Requirements
 
-## Einstellungen
+A SmartHomeNG installation (a folder containing `items/`) in the workspace, or the setting `shngItems.basePath`, e.g.
+for a network share `\\smarthomeng\SmartHomeNG`. For KNX suggestions, an ETS project (`.knxproj`) exported **without a
+password**.
 
-| Einstellung | Bedeutung |
+## Settings
+
+| Setting | Meaning |
 |---|---|
-| `shngItems.basePath` | SmartHomeNG-Verzeichnis, falls es nicht im Workspace liegt (z.B. im smartVISU-Workspace) |
-| `shngItems.showAttributes` | Attribute als Unterknoten zeigen |
-| `shngItems.showStructItems` | durch Structs erzeugte Items zeigen |
-| `shngItems.sortAlphabetically` | alphabetisch statt Dateireihenfolge |
-| `shngItems.diagnostics` | Prüfungen an/aus |
+| `shngItems.basePath` | SmartHomeNG directory if it is not part of the workspace |
+| `shngItems.knxProject` | path to the ETS project (`.knxproj`) for group addresses, DPT and hover |
+| `shngItems.categories` | extra filter categories not tied to a plugin (name → attribute names, `*` = prefix) |
+| `shngItems.showAttributes` | show attributes as child nodes in the tree |
+| `shngItems.showStructItems` | show items created by structs |
+| `shngItems.sortAlphabetically` | sort alphabetically instead of file order |
+| `shngItems.diagnostics` | enable/disable diagnostics |
 
-## Test ohne VS Code
+## License
 
-```bash
-ELECTRON_RUN_AS_NODE=1 "<VS Code>/Code.exe" test/smoke.js //smarthomeng/SmartHomeNG eg.bad.licht
-```
+[MIT](LICENSE)

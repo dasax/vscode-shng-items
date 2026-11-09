@@ -1,16 +1,23 @@
 {
   "name": "shng-items",
   "displayName": "SmartHomeNG Items",
-  "description": "Übersichtliche Darstellung der SmartHomeNG-Items: Baum, Tabelle, Hover, Gehe-zu-Definition und Prüfungen",
+  "description": "SmartHomeNG items in VS Code: item tree with resolved structs, search & filter, autocomplete for items/structs/logics, KNX group addresses from the ETS project (UI in German)",
   "version": "0.1.0",
   "publisher": "dasax",
   "license": "MIT",
+  "icon": "media/icon.png",
   "engines": {
     "vscode": "^1.80.0"
   },
-  "categories": ["Visualization", "Other"],
+  "categories": ["Programming Languages", "Visualization", "Other"],
+  "keywords": ["SmartHomeNG", "smarthome.py", "smartVISU", "KNX", "ETS", "home automation", "YAML"],
+  "galleryBanner": { "color": "#1E5A96", "theme": "dark" },
   "main": "./extension.js",
-  "activationEvents": ["onStartupFinished"],
+  "activationEvents": [
+    "workspaceContains:items/*.yaml",
+    "workspaceContains:etc/smarthome.yaml",
+    "onLanguage:yaml"
+  ],
   "contributes": {
     "viewsContainers": {
       "activitybar": [
@@ -38,6 +45,12 @@
       { "command": "shngItems.toggleAttributes", "title": "Attribute ein-/ausblenden", "category": "SmartHomeNG" },
       { "command": "shngItems.toggleStructItems", "title": "Struct-Items ein-/ausblenden", "category": "SmartHomeNG" },
       { "command": "shngItems.toggleSort", "title": "Alphabetisch sortieren ein/aus", "category": "SmartHomeNG" },
+      { "command": "shngItems.hideAttributes", "title": "Attribute ausblenden", "category": "SmartHomeNG", "icon": "$(symbol-property)" },
+      { "command": "shngItems.showAttributes", "title": "Attribute einblenden", "category": "SmartHomeNG", "icon": "$(symbol-property)" },
+      { "command": "shngItems.hideStructItems", "title": "Struct-Items ausblenden (nur Items aus items/)", "category": "SmartHomeNG", "icon": "$(symbol-structure)" },
+      { "command": "shngItems.showStructItems", "title": "Struct-Items einblenden", "category": "SmartHomeNG", "icon": "$(symbol-structure)" },
+      { "command": "shngItems.sortFileOrder", "title": "Reihenfolge wie in den Dateien (aktuell: alphabetisch)", "category": "SmartHomeNG", "icon": "$(sort-precedence)" },
+      { "command": "shngItems.sortAlpha", "title": "Alphabetisch sortieren (aktuell: wie in den Dateien)", "category": "SmartHomeNG", "icon": "$(sort-precedence)" },
       { "command": "shngItems.open", "title": "Definition öffnen", "category": "SmartHomeNG" }
     ],
     "menus": {
@@ -48,9 +61,12 @@
         { "command": "shngItems.overview", "when": "view == shngItems.tree", "group": "navigation@3" },
         { "command": "shngItems.refresh", "when": "view == shngItems.tree", "group": "navigation@4" },
         { "command": "shngItems.clearCategories", "when": "view == shngItems.categories && shngItems.categoriesActive", "group": "navigation@1" },
-        { "command": "shngItems.toggleAttributes", "when": "view == shngItems.tree", "group": "1_view@1" },
-        { "command": "shngItems.toggleStructItems", "when": "view == shngItems.tree", "group": "1_view@2" },
-        { "command": "shngItems.toggleSort", "when": "view == shngItems.tree", "group": "1_view@3" }
+        { "command": "shngItems.hideAttributes", "when": "view == shngItems.tree && config.shngItems.showAttributes", "group": "navigation@5" },
+        { "command": "shngItems.showAttributes", "when": "view == shngItems.tree && !config.shngItems.showAttributes", "group": "navigation@5" },
+        { "command": "shngItems.hideStructItems", "when": "view == shngItems.tree && config.shngItems.showStructItems", "group": "navigation@6" },
+        { "command": "shngItems.showStructItems", "when": "view == shngItems.tree && !config.shngItems.showStructItems", "group": "navigation@6" },
+        { "command": "shngItems.sortFileOrder", "when": "view == shngItems.tree && config.shngItems.sortAlphabetically", "group": "navigation@7" },
+        { "command": "shngItems.sortAlpha", "when": "view == shngItems.tree && !config.shngItems.sortAlphabetically", "group": "navigation@7" }
       ],
       "view/item/context": [
         { "command": "shngItems.copyPath", "when": "view == shngItems.tree && viewItem =~ /^item/", "group": "inline" },
@@ -64,7 +80,13 @@
         { "command": "shngItems.open", "when": "false" },
         { "command": "shngItems.copyPath", "when": "false" },
         { "command": "shngItems.findReferences", "when": "false" },
-        { "command": "shngItems.clearFilter", "when": "shngItems.filtered" }
+        { "command": "shngItems.clearFilter", "when": "shngItems.filtered" },
+        { "command": "shngItems.hideAttributes", "when": "false" },
+        { "command": "shngItems.showAttributes", "when": "false" },
+        { "command": "shngItems.hideStructItems", "when": "false" },
+        { "command": "shngItems.showStructItems", "when": "false" },
+        { "command": "shngItems.sortFileOrder", "when": "false" },
+        { "command": "shngItems.sortAlpha", "when": "false" }
       ]
     },
     "keybindings": [
