@@ -1,0 +1,3 @@
+# gebautes Installationspaket (entsteht mit build.ps1)
+*.vsix
+node_modules/

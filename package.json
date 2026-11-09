@@ -1,0 +1,120 @@
+{
+  "name": "shng-items",
+  "displayName": "SmartHomeNG Items",
+  "description": "Übersichtliche Darstellung der SmartHomeNG-Items: Baum, Tabelle, Hover, Gehe-zu-Definition und Prüfungen",
+  "version": "0.1.0",
+  "publisher": "dasax",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": ["Visualization", "Other"],
+  "main": "./extension.js",
+  "activationEvents": ["onStartupFinished"],
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        { "id": "shng", "title": "SmartHomeNG", "icon": "media/icon.svg" }
+      ]
+    },
+    "views": {
+      "shng": [
+        { "id": "shngItems.categories", "type": "webview", "name": "Filter", "icon": "media/icon.svg" },
+        { "id": "shngItems.search", "type": "webview", "name": "Suche", "icon": "media/icon.svg" },
+        { "id": "shngItems.tree", "name": "Items", "icon": "media/icon.svg" }
+      ]
+    },
+    "commands": [
+      { "command": "shngItems.focusSearch", "title": "Items suchen", "category": "SmartHomeNG", "icon": "$(search)" },
+      { "command": "shngItems.refresh", "title": "Neu laden", "category": "SmartHomeNG", "icon": "$(refresh)" },
+      { "command": "shngItems.filter", "title": "Items filtern …", "category": "SmartHomeNG", "icon": "$(filter)" },
+      { "command": "shngItems.clearFilter", "title": "Filter entfernen", "category": "SmartHomeNG", "icon": "$(filter-filled)" },
+      { "command": "shngItems.clearCategories", "title": "Alle Kategorien abwählen", "category": "SmartHomeNG", "icon": "$(clear-all)" },
+      { "command": "shngItems.goto", "title": "Item öffnen …", "category": "SmartHomeNG", "icon": "$(search)" },
+      { "command": "shngItems.overview", "title": "Item-Übersicht (Tabelle)", "category": "SmartHomeNG", "icon": "$(table)" },
+      { "command": "shngItems.copyPath", "title": "Item-Pfad kopieren", "category": "SmartHomeNG", "icon": "$(copy)" },
+      { "command": "shngItems.findReferences", "title": "Verwendungen suchen", "category": "SmartHomeNG", "icon": "$(references)" },
+      { "command": "shngItems.revealCurrent", "title": "Item im Baum anzeigen", "category": "SmartHomeNG", "icon": "$(target)" },
+      { "command": "shngItems.toggleAttributes", "title": "Attribute ein-/ausblenden", "category": "SmartHomeNG" },
+      { "command": "shngItems.toggleStructItems", "title": "Struct-Items ein-/ausblenden", "category": "SmartHomeNG" },
+      { "command": "shngItems.toggleSort", "title": "Alphabetisch sortieren ein/aus", "category": "SmartHomeNG" },
+      { "command": "shngItems.open", "title": "Definition öffnen", "category": "SmartHomeNG" }
+    ],
+    "menus": {
+      "view/title": [
+        { "command": "shngItems.filter", "when": "view == shngItems.tree && !shngItems.filtered", "group": "navigation@1" },
+        { "command": "shngItems.clearFilter", "when": "view == shngItems.tree && shngItems.filtered", "group": "navigation@1" },
+        { "command": "shngItems.goto", "when": "view == shngItems.tree", "group": "navigation@2" },
+        { "command": "shngItems.overview", "when": "view == shngItems.tree", "group": "navigation@3" },
+        { "command": "shngItems.refresh", "when": "view == shngItems.tree", "group": "navigation@4" },
+        { "command": "shngItems.clearCategories", "when": "view == shngItems.categories && shngItems.categoriesActive", "group": "navigation@1" },
+        { "command": "shngItems.toggleAttributes", "when": "view == shngItems.tree", "group": "1_view@1" },
+        { "command": "shngItems.toggleStructItems", "when": "view == shngItems.tree", "group": "1_view@2" },
+        { "command": "shngItems.toggleSort", "when": "view == shngItems.tree", "group": "1_view@3" }
+      ],
+      "view/item/context": [
+        { "command": "shngItems.copyPath", "when": "view == shngItems.tree && viewItem =~ /^item/", "group": "inline" },
+        { "command": "shngItems.copyPath", "when": "view == shngItems.tree && viewItem =~ /^item/", "group": "1_item@1" },
+        { "command": "shngItems.findReferences", "when": "view == shngItems.tree && viewItem =~ /^item/", "group": "1_item@2" }
+      ],
+      "editor/context": [
+        { "command": "shngItems.revealCurrent", "when": "resourceExtname == .yaml", "group": "navigation@90" }
+      ],
+      "commandPalette": [
+        { "command": "shngItems.open", "when": "false" },
+        { "command": "shngItems.copyPath", "when": "false" },
+        { "command": "shngItems.findReferences", "when": "false" },
+        { "command": "shngItems.clearFilter", "when": "shngItems.filtered" }
+      ]
+    },
+    "keybindings": [
+      { "command": "shngItems.focusSearch", "key": "ctrl+shift+alt+i" }
+    ],
+    "configuration": {
+      "title": "SmartHomeNG Items",
+      "properties": {
+        "shngItems.basePath": {
+          "type": "string",
+          "default": "",
+          "markdownDescription": "Pfad zur SmartHomeNG-Installation (Ordner mit `items/`). Leer = erster Workspace-Ordner, der `items/` enthält. Beispiel: `\\\\smarthomeng\\SmartHomeNG`"
+        },
+        "shngItems.knxProject": {
+          "type": "string",
+          "default": "",
+          "markdownDescription": "Pfad zum ETS-Projekt (`.knxproj`, ohne Passwort exportiert). Daraus kommen Gruppenadressen mit Name und DPT für die Autovervollständigung von `knx_send`, `knx_listen` usw., `knx_dpt` und für den Hover über Gruppenadressen. Beispiel: `C:\\Users\\…\\Projekt.knxproj`"
+        },
+        "shngItems.showAttributes": {
+          "type": "boolean",
+          "default": true,
+          "description": "Attribute als Unterknoten im Baum anzeigen"
+        },
+        "shngItems.showStructItems": {
+          "type": "boolean",
+          "default": true,
+          "description": "Items anzeigen, die erst durch Structs entstehen"
+        },
+        "shngItems.sortAlphabetically": {
+          "type": "boolean",
+          "default": false,
+          "description": "Items alphabetisch sortieren (sonst Reihenfolge wie in den Dateien)"
+        },
+        "shngItems.categories": {
+          "type": "object",
+          "additionalProperties": { "type": "array", "items": { "type": "string" } },
+          "markdownDescription": "Zusätzliche Filter-Kategorien, die zu keinem Plugin gehören: Name → Attributnamen, die ein Item zu dieser Kategorie machen. `*` am Ende = Präfix (z.B. `sv_*`). Für jedes in `etc/plugin.yaml` konfigurierte Plugin entsteht automatisch eine Kategorie aus den `item_attributes` seiner `plugin.yaml`.",
+          "default": {
+            "eval / Logik": ["eval", "eval_trigger", "on_change", "on_update"],
+            "Zeitsteuerung": ["crontab", "cycle", "autotimer"],
+            "smartVISU": ["visu_acl", "sv_*"],
+            "Cache": ["cache", "initial_value"]
+          }
+        },
+        "shngItems.diagnostics": {
+          "type": "boolean",
+          "default": true,
+          "description": "Warnungen für unbekannte Structs, eval_trigger und sh.*-Referenzen in eval anzeigen"
+        }
+      }
+    }
+  }
+}
