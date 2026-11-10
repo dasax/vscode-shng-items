@@ -1,12 +1,16 @@
 # SmartHomeNG Items for VS Code
 
-[Deutsch](README.de.md)
+![](https://flagcdn.com/20x15/de.png) [Deutsch](README.de.md) &nbsp;
+![](https://flagcdn.com/20x15/fr.png) [Français](README.fr.md) &nbsp;
+![](https://flagcdn.com/20x15/es.png) [Español](README.es.md) &nbsp;
+![](https://flagcdn.com/20x15/it.png) [Italiano](README.it.md)
 
-Shows the items of a [SmartHomeNG](https://www.smarthomeng.de) installation the way SmartHomeNG sees them after
-loading: all `items/*.yaml` files merged and structs (`structs/`, `etc/struct*.yaml`, `plugins/<plugin>/plugin.yaml`)
-resolved. Adds search, filters, autocomplete and KNX group addresses from your ETS project.
+Create and manage your [SmartHomeNG](https://www.smarthomeng.de) items quickly and efficiently:
 
-> The user interface is in German, as is most of the SmartHomeNG community.
+- Search, sort and filter the items of your SmartHomeNG configuration
+- Navigate your configuration efficiently
+- Edit and extend your configuration with context-aware autocomplete and YAML support
+- Connect your KNX project and find group addresses without leaving VS Code
 
 ## Features
 
@@ -35,7 +39,7 @@ resolved. Adds search, filters, autocomplete and KNX group addresses from your E
 - **Hover & Go to Definition (F12)** for item paths in YAML, Python (logics) and HTML (smartVISU).
 - **Diagnostics**: unknown structs, `eval_trigger` pointing to missing items, unknown `sh.*` references in
   `eval`/`on_change`/`on_update`.
-- Context menu: copy item path, find usages; in the editor: "Item im Baum anzeigen" (reveal item in tree).
+- Context menu: copy item path, find usages; in the editor: "Reveal item in tree".
 
 ## Requirements
 
@@ -47,6 +51,7 @@ password**.
 
 | Setting | Meaning |
 |---|---|
+| `shngItems.language` | language of the user interface: `en` (default), `de`, `es`, `fr`, `it`, `nl` or `auto` (display language of VS Code) |
 | `shngItems.basePath` | SmartHomeNG directory if it is not part of the workspace |
 | `shngItems.knxProject` | path to the ETS project (`.knxproj`) for group addresses, DPT and hover |
 | `shngItems.categories` | extra filter categories not tied to a plugin (name → attribute names, `*` = prefix) |
@@ -54,6 +59,14 @@ password**.
 | `shngItems.showStructItems` | show items created by structs |
 | `shngItems.sortAlphabetically` | sort alphabetically instead of file order |
 | `shngItems.diagnostics` | enable/disable diagnostics |
+
+Command names and setting descriptions are shown in the display language of VS Code (VS Code does not allow an
+extension to change them at runtime); everything else follows `shngItems.language`.
+
+## Translations
+
+Texts are in `lib/l10n/<language>.json` (views, tooltips, autocomplete, messages) and `package.nls.<language>.json`
+(commands and settings). Missing keys fall back to English. Corrections and new languages are welcome as pull requests.
 
 ## License
 

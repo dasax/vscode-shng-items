@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.0.0
+
+- User interface in English, German, Spanish, French, Italian and Dutch; new setting `shngItems.language`
+  (default: English, `auto` = display language of VS Code). Commands and settings follow the display language of VS Code.
+- Plugin descriptions from `plugin.yaml` in the selected language (fallback English, then German)
+- Group address suggestions also match English ETS names (switch, dim, light, blind, temperature, feedback)
+- Default filter categories renamed to English ("eval / logic", "Timers"); the former German names still work
+
 ## 0.1.1
 
 - Package now includes the license file

@@ -1,11 +1,16 @@
 # SmartHomeNG Items für VS Code
 
-[English](README.md)
+![](https://flagcdn.com/20x15/gb.png) [English](README.md) &nbsp;
+![](https://flagcdn.com/20x15/fr.png) [Français](README.fr.md) &nbsp;
+![](https://flagcdn.com/20x15/es.png) [Español](README.es.md) &nbsp;
+![](https://flagcdn.com/20x15/it.png) [Italiano](README.it.md)
 
-Zeigt die in `items/*.yaml` definierten [SmartHomeNG](https://www.smarthomeng.de)-Items übersichtlich an – so, wie
-SmartHomeNG sie nach dem Laden sieht: alle Dateien zusammengeführt und Structs (`structs/`, `etc/struct*.yaml`,
-`plugins/<plugin>/plugin.yaml`) aufgelöst. Dazu Suche, Filter, Autovervollständigung und KNX-Gruppenadressen aus dem
-ETS-Projekt.
+Erstelle und verwalte deine [SmartHomeNG](https://www.smarthomeng.de)-Items schnell und effizient:
+
+- Suche, sortiere und filtere Items in deiner SmartHomeNG-Konfiguration
+- Navigiere effizient durch deine Konfiguration
+- Editiere und erweitere deine Konfiguration durch kontextbezogene Autovervollständigung und YAML-Unterstützung
+- Binde dein KNX-Projekt ein und finde Gruppenadressen, ohne VS Code zu verlassen
 
 ## Funktionen
 
@@ -46,6 +51,7 @@ z.B. für eine Netzwerkfreigabe `\\smarthomeng\SmartHomeNG`. Für die KNX-Vorsch
 
 | Einstellung | Bedeutung |
 |---|---|
+| `shngItems.language` | Sprache der Oberfläche: `en` (Standard), `de`, `es`, `fr`, `it`, `nl` oder `auto` (Anzeigesprache von VS Code) |
 | `shngItems.basePath` | SmartHomeNG-Verzeichnis, falls es nicht im Workspace liegt |
 | `shngItems.knxProject` | Pfad zum ETS-Projekt (`.knxproj`) für Gruppenadressen, DPT und Hover |
 | `shngItems.categories` | zusätzliche Filter-Kategorien, die zu keinem Plugin gehören (Name → Attributnamen, `*` = Präfix) |
@@ -53,6 +59,14 @@ z.B. für eine Netzwerkfreigabe `\\smarthomeng\SmartHomeNG`. Für die KNX-Vorsch
 | `shngItems.showStructItems` | durch Structs erzeugte Items zeigen |
 | `shngItems.sortAlphabetically` | alphabetisch statt Dateireihenfolge |
 | `shngItems.diagnostics` | Prüfungen an/aus |
+
+Befehlsnamen und die Beschreibungen der Einstellungen erscheinen in der Anzeigesprache von VS Code, weil VS Code sie
+nicht zur Laufzeit ändern lässt; alles andere folgt `shngItems.language`.
+
+## Übersetzungen
+
+Die Texte stehen in `lib/l10n/<sprache>.json` (Ansichten, Tooltips, Autovervollständigung, Meldungen) und
+`package.nls.<sprache>.json` (Befehle und Einstellungen). Fehlende Schlüssel fallen auf Englisch zurück.
 
 ## Entwicklung
 

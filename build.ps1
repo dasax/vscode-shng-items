@@ -10,9 +10,18 @@ Add-Type -AssemblyName System.IO.Compression, System.IO.Compression.FileSystem
 $root = $PSScriptRoot
 $pkg = Get-Content (Join-Path $root 'package.json') -Raw -Encoding UTF8 | ConvertFrom-Json
 $vsix = Join-Path $root "$($pkg.name)-$($pkg.version).vsix"
-$files = @('package.json', 'extension.js', 'README.md', 'README.de.md', 'CHANGELOG.md') +
+$files = @('package.json', 'extension.js', 'CHANGELOG.md', 'LICENSE') +
+    (Get-ChildItem $root -File -Filter 'README*.md' | ForEach-Object { $_.Name }) +
+    (Get-ChildItem $root -File -Filter 'package.nls*.json' | ForEach-Object { $_.Name }) +
     (Get-ChildItem (Join-Path $root 'lib') -File | ForEach-Object { "lib/$($_.Name)" }) +
+    (Get-ChildItem (Join-Path $root 'lib/l10n') -File | ForEach-Object { "lib/l10n/$($_.Name)" }) +
     (Get-ChildItem (Join-Path $root 'media') -File | ForEach-Object { "media/$($_.Name)" })
+# "%description%" aus package.nls.json auflösen
+$description = $pkg.description
+if ($description -match '^%(.+)%$') {
+    $nls = Get-Content (Join-Path $root 'package.nls.json') -Raw -Encoding UTF8 | ConvertFrom-Json
+    $description = $nls.($Matches[1])
+}
 
 $manifest = @"
 <?xml version="1.0" encoding="utf-8"?>
@@ -20,7 +29,7 @@ $manifest = @"
   <Metadata>
     <Identity Language="en-US" Id="$($pkg.name)" Version="$($pkg.version)" Publisher="$($pkg.publisher)" />
     <DisplayName>$($pkg.displayName)</DisplayName>
-    <Description xml:space="preserve">$([System.Security.SecurityElement]::Escape($pkg.description))</Description>
+    <Description xml:space="preserve">$([System.Security.SecurityElement]::Escape($description))</Description>
     <Categories>Programming Languages,Visualization,Other</Categories>
     <Icon>extension/media/icon.png</Icon>
     <Properties>

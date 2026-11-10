@@ -12,6 +12,11 @@ const { FilterView } = require('./lib/filterview');
 const { registerCompletion } = require('./lib/complete');
 const { describe } = require('./lib/present');
 const overview = require('./lib/overview');
+const i18n = require('./lib/i18n');
+const { t } = i18n;
+
+const applyLanguage = () =>
+    i18n.setLanguage(vscode.workspace.getConfiguration('shngItems').get('language'), vscode.env.language);
 
 const fsAdapter = {
     join: (base, ...parts) => vscode.Uri.joinPath(base, ...parts),
@@ -47,6 +52,7 @@ async function findBase() {
 }
 
 async function activate(context) {
+    applyLanguage();
     const categories = new CategoryTree(() => model, context.workspaceState);
     const tree = new ItemTree(() => model, () => categories.active());
     const view = vscode.window.createTreeView('shngItems.tree', { treeDataProvider: tree, showCollapseAll: true });
@@ -80,14 +86,14 @@ async function activate(context) {
     let reloadTimer = null;
 
     const updateMessage = () => {
-        if (!base) view.message = 'Kein SmartHomeNG-Verzeichnis (mit Unterordner items/) gefunden – siehe Einstellung shngItems.basePath.';
-        else if (model && model.errors.length) view.message = `Fehler beim Lesen: ${model.errors[0]}`;
+        if (!base) view.message = t('msg.noBase');
+        else if (model && model.errors.length) view.message = t('msg.readError', model.errors[0]);
         else if (tree.visible) {
             const parts = [];
             if (tree.filter) parts.push(`"${tree.filter}"`);
             const cats = categories.label();
             if (cats) parts.push(cats);
-            view.message = `Filter: ${parts.join(' + ')} – ${tree.visible.size} Items`;
+            view.message = t('msg.filterStatus', parts.join(' + '), tree.visible.size);
         } else view.message = undefined;
         vscode.commands.executeCommand('setContext', 'shngItems.filtered', !!tree.filter);
         vscode.commands.executeCommand('setContext', 'shngItems.categoriesActive', categories.active().length > 0);
@@ -141,8 +147,15 @@ async function activate(context) {
     context.subscriptions.push(vscode.workspace.onDidSaveTextDocument(doc => {
         if (base && doc.uri.toString().startsWith(base.toString()) && doc.fileName.endsWith('.yaml')) scheduleReload();
     }));
-    context.subscriptions.push(vscode.workspace.onDidChangeConfiguration(e => {
-        if (e.affectsConfiguration('shngItems.basePath') || e.affectsConfiguration('shngItems.diagnostics')) reload();
+    context.subscriptions.push(vscode.workspace.onDidChangeConfiguration(async e => {
+        if (e.affectsConfiguration('shngItems.language')) {
+            // Texte stecken auch im Modell (Plugin-Beschreibungen) und in den Webviews
+            applyLanguage();
+            await reload();
+            search.relocalize();
+            filterView.relocalize();
+            overview.relocalize(model);
+        } else if (e.affectsConfiguration('shngItems.basePath') || e.affectsConfiguration('shngItems.diagnostics')) reload();
         else if (e.affectsConfiguration('shngItems.categories')) {
             categories.reload();
             tree.refresh();
@@ -195,8 +208,8 @@ async function activate(context) {
 
     cmd('shngItems.filter', async () => {
         const text = await vscode.window.showInputBox({
-            title: 'Items filtern',
-            prompt: 'Sucht in Pfaden, Attributnamen und -werten (z.B. "knx_send 1/1/12", "bad licht", "uzsu"). Mehrere Begriffe = UND.',
+            title: t('cmd.filterTitle'),
+            prompt: t('cmd.filterPrompt'),
             value: tree.filter,
         });
         if (text === undefined) return;
@@ -220,8 +233,8 @@ async function activate(context) {
         if (!model) return;
         const picks = [...model.nodes()].map(n => ({ label: n.path, description: describe(n), node: n }));
         const pick = await vscode.window.showQuickPick(picks, {
-            title: 'Item öffnen',
-            placeHolder: 'Item-Pfad eingeben …',
+            title: t('cmd.gotoTitle'),
+            placeHolder: t('cmd.gotoPlaceholder'),
             matchOnDescription: true,
         });
         if (!pick) return;
@@ -240,7 +253,7 @@ async function activate(context) {
         const node = nodeOf(el || view.selection[0]);
         if (!node) return;
         vscode.env.clipboard.writeText(node.path);
-        vscode.window.setStatusBarMessage(`Kopiert: ${node.path}`, 2500);
+        vscode.window.setStatusBarMessage(t('msg.copied', node.path), 2500);
     });
 
     cmd('shngItems.findReferences', (el) => {
@@ -260,7 +273,7 @@ async function activate(context) {
         if (!editor || !model) return;
         const defs = model.defsByFile.get(editor.document.uri.toString().toLowerCase());
         if (!defs) {
-            vscode.window.showInformationMessage('Diese Datei enthält keine Item-Definitionen.');
+            vscode.window.showInformationMessage(t('msg.noItemsInFile'));
             return;
         }
         // vom Cursor aus nach oben die nächste umschließende Item-Zeile suchen
